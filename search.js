@@ -4,14 +4,23 @@ const ITEM = process.argv[3];
 const MIN_PROP = process.argv[4];
 
 const processFile = (data) => {
-    const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareProp);
+    const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareRewards);
     for(let mission of missions) {
-        console.log(`${mission.reward.item} (${mission.reward.properbility.toFixed(2)}%) : ${mission.mission.type} - ${mission.mission.name}/${mission.mission.planet}`);
+        let type = mission.mission.type;
+        if(mission.rotation) {
+            type += ` (${mission.rotation})`;
+        }
+        console.log(`${mission.reward.item} (${mission.reward.properbility.toFixed(2)}%) : ${type} - ${mission.mission.name}/${mission.mission.planet}`);
     }
 };
 
-const compareProp = (a, b) => {
-    return b.reward.properbility - a.reward.properbility;
+const compareRewards = (a, b) => {
+    let itemCompare = a.reward.item.localeCompare(b.reward.item);
+    if(itemCompare == 0) {
+        return b.reward.properbility - a.reward.properbility;
+    } else {
+        return itemCompare;
+    }
 };
 
 const findMissions = (missions, item, minProp) => {
@@ -29,6 +38,7 @@ const findRewards = (mission, item, minProp) => {
     if(mission.rotations) {
         for(let rotatation of mission.rotations) {
             for(let reward of findInRewards(mission, rotatation.rewards, item, minProp)) {
+                reward.rotation = rotatation.name;
                 rewards.push(reward);
             }
         }
