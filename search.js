@@ -2,14 +2,16 @@ const fs = require('node:fs');
 const FILE_NAME = process.argv[2];
 const ITEM = process.argv[3];
 const MIN_PROP = process.argv[4];
-console.log(process.argv);
 
 const processFile = (data) => {
-    const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0);
+    const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareProp);
     for(let mission of missions) {
-        
-        console.log(`${mission.mission.name}/${mission.mission.planet} (${mission.mission.type}): ${mission.reward.item} (${mission.reward.properbility}%)`);
+        console.log(`${mission.reward.item} (${mission.reward.properbility.toFixed(2)}%) : ${mission.mission.type} - ${mission.mission.name}/${mission.mission.planet}`);
     }
+};
+
+const compareProp = (a, b) => {
+    return b.reward.properbility - a.reward.properbility;
 };
 
 const findMissions = (missions, item, minProp) => {
