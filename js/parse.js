@@ -1,27 +1,10 @@
-const argMappers = new Map();
-let line;
-let processor;
-
-const argMapping = (argv) => {
-    let mapper = argMappers.get(argv);
-    if(mapper) {
-        processor = (argv) => {
-            mapper(argv);
-            processor = argMapping;
-        };
-    }
-};
-argMappers.set('--line', (argv) => line = argv);
-
-processor = argMapping;
-for(let argv of process.argv) {
-    processor(argv);
-}
-
 const REGEX_NAME = /\<th\scolspan\=\"2\"\>(?<name>.*?)\<\/th\>/;
 const REGEX_ROW = /\<tr\>(?<content>.*?)\<\/tr\>/g;
 const REGEX_MISSION = /(?<planet>[^\/]*)\/(?<name>[^\()]*)\((?<type>[^\)]*)/;
 const REGEX_REWARD = /\<td\>(?<item>[\s\S]*)\<\/td\>\<td\>(?<rarity>[a-zA-Z\s]*)\((?<properbility>.*)\%\)\<\/td\>/;
+
+const argsMap = require("./arg-mapping.js");
+const line = argsMap.get("--line");
 
 const mission = {};
 for( let match of line.matchAll(REGEX_ROW)) {
