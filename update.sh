@@ -1,11 +1,11 @@
 DATE=$(date +"%Y-%m-%d_%H%M%S")
 DATA_URL="https://www.warframe.com/droptables"
 
-echo "FETCHED_FILE=\"tmp/fetched-$DATE.html\"" > set-env.sh
-echo "CRAWLED_FILE=\"tmp/crawled-$DATE.txt\"" >> set-env.sh
-echo "PARSED_FILE=\"tmp/parsed-$DATE.json\"" >> set-env.sh
+echo "FETCHED_FILE=\"tmp/fetched-$DATE.html\"" > tmp/set-env.sh
+echo "CRAWLED_FILE=\"tmp/crawled-$DATE.txt\"" >> tmp/set-env.sh
+echo "PARSED_FILE=\"tmp/parsed-$DATE.json\"" >> tmp/set-env.sh
 
-. ./set-env.sh
+. ./tmp/set-env.sh
 
 echo "Fetching data from $DATA_URL"
 curl "$DATA_URL" -s > "$FETCHED_FILE"

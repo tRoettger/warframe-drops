@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./set-env.sh
+. ./tmp/set-env.sh
 
 ITEM=$1
 MIN_PROP=$2
