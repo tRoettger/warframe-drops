@@ -11,6 +11,6 @@ do
     else
         echo ","
     fi
-    node parse.js --line "$line"
+    node js/parse.js --line "$line"
 done < $CRAWLED_FILE
 echo "]"
