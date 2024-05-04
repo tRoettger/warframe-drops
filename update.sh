@@ -12,11 +12,11 @@ curl "$DATA_URL" -s > "$FETCHED_FILE"
 echo "Data stored at $FETCHED_FILE"
 
 echo "Crawl relevant lines..."
-./crawl.sh "$FETCHED_FILE" > "$CRAWLED_FILE"
+./internal/crawl.sh "$FETCHED_FILE" > "$CRAWLED_FILE"
 echo "Relevant lines stored at $CRAWLED_FILE"
 
 echo "Parsing lines..."
-./parse.sh "$CRAWLED_FILE" > "$PARSED_FILE"
+./internal/parse.sh "$CRAWLED_FILE" > "$PARSED_FILE"
 echo "Parsed output stored at $PARSED_FILE"
 
 echo "Cleaning up..."
