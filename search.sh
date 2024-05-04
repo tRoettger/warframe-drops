@@ -5,4 +5,4 @@
 ITEM=$1
 MIN_PROP=$2
 
-node js/search.js "$PARSED_FILE" "$ITEM" "$MIN_PROP"
+node js/search.js --file "$PARSED_FILE" --item "$ITEM" --minProp "$MIN_PROP"

@@ -1,7 +1,8 @@
 const fs = require('node:fs');
-const FILE_NAME = process.argv[2];
-const ITEM = process.argv[3];
-const MIN_PROP = process.argv[4];
+const argsMap = require("./arg-mapping.js");
+const FILE_NAME = argsMap.get("--file");
+const ITEM = argsMap.get("--item");
+const MIN_PROP = argsMap.get("--minProp");
 
 const processFile = (data) => {
     const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareRewards);
