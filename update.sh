@@ -1,6 +1,8 @@
 DATE=$(date +"%Y-%m-%d_%H%M%S")
 DATA_URL="https://www.warframe.com/droptables"
 
+mkdir -p tmp
+
 echo "#!/bin/bash"
 echo ""
 echo "FETCHED_FILE=\"tmp/fetched-$DATE.html\"" > tmp/set-env.sh
