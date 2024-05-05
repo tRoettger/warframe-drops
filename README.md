@@ -15,13 +15,18 @@ Furthermore it provides a command to search within the crawled content.
 
 ### search
 
-The search command take two arguments:
+This command will print all missions and rotations where an item is dropped.
 
-1. An item (use double-quots if spaces are contained).
-2. (Optional) A minimum properability (drop rate).
+The search command take an item name as argument.  
+Use double-quots if spaces are contained.
 
-When called with a string for the item, this command will print all missions and rotations where this item is dropped.  
-Using the second argument allows to limit this list to drop rates, which are greater or equal to the given argument.
+Additionally the optional arguments below can be used.
+
+#### Optional arguments
+
+| Identifier | Short | Format | Description |
+| ---------- | ----- | ------ | ----------- |
+| --minProp | | number | A minimum properability (drop rate). This argument allows to limit this list to drop rates, which are greater or equal to the given argument. |
 
 ### update
 
