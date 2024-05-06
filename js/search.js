@@ -20,7 +20,11 @@ const readFile = (file) => new Promise((resolve, reject) => {
 });
 
 const processFile = (data) => {
-    const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareRewards);
+    const missions = findMissions(
+        JSON.parse(data),
+        CASE_INSENSITIVE ? ITEM.toUpperCase() : ITEM,
+        MIN_PROP || 0
+    ).sort(compareRewards);
     postProcessMissions(missions);
 };
 
@@ -139,7 +143,10 @@ const findRewards = (mission, item, minProp) => {
 
 const findInRewards = (mission, rewards, item, minProp) => {
     return rewards
-        .filter(reward => reward.item.includes(item) && reward.properbility >= minProp)
+        .filter(reward => 
+            (CASE_INSENSITIVE ? reward.item.toUpperCase() : reward.item).includes(item) 
+            && reward.properbility >= minProp
+        )
         .map(reward => ({reward, mission}));
 }
 

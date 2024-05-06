@@ -26,7 +26,8 @@ Additionally the optional arguments below can be used.
 
 | Identifier | Short | Format | Description |
 | ---------- | ----- | ------ | ----------- |
-| &#x2011;&#x2011;blacklist | &#2011;x | file path | A path to a [mission list file](#mission-list-file). Results for the contained missions will be excluded. Cannot be used along with &#x2011;&#x2011;whitelist. |
+| &#x2011;&#x2011;blacklist | &#x2011;x | file path | A path to a [mission list file](#mission-list-file). Results for the contained missions will be excluded. Cannot be used along with &#x2011;&#x2011;whitelist. |
+| &#x2011;&#x2011;caseinsensitive | &#x2011;i | | Makes the search for the item case insensitive. |
 | &#x2011;&#x2011;minProp | | number | A minimum properability (drop rate). This argument allows to limit this list to drop rates, which are greater or equal to the given argument. |
 | &#x2011;&#x2011;whitelist | &#2011;w | file path | A path to a [mission list file](#mission-list-file). Only results for the contained missions will be displayed. Cannot be used along with &#x2011;&#x2011;blacklist. |
 
