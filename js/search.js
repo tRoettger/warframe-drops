@@ -3,8 +3,8 @@ const argsMap = require("./arg-mapping.js");
 const FILE_NAME = argsMap.get("--file");
 const ITEM = argsMap.get("--item");
 const MIN_PROP = argsMap.get("--minProp");
-const BLACKLIST = argsMap.get("--blacklist");
-const WHITELIST = argsMap.get("--whitelist");
+const BLACKLIST = argsMap.get("--blacklist") || argsMap.get("-x");
+const WHITELIST = argsMap.get("--whitelist") || argsMap.get("-w");
 
 const readFile = (file) => new Promise((resolve, reject) => {
     fs.readFile(file, "utf-8", (err, data) => {
