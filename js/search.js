@@ -3,8 +3,11 @@ const argsMap = require("./arg-mapping.js");
 const FILE_NAME = argsMap.get("--file");
 const ITEM = argsMap.get("--item");
 const MIN_PROP = argsMap.get("--minProp");
-const BLACKLIST = argsMap.get("--blacklist");
-const WHITELIST = argsMap.get("--whitelist");
+const BLACKLIST = argsMap.get("--blacklist") || argsMap.get("-x");
+const WHITELIST = argsMap.get("--whitelist") || argsMap.get("-w");
+const CASE_INSENSITIVE = argsMap.get("--caseinsensitive") || argsMap.get("-i");
+
+console.log("case insensitve", CASE_INSENSITIVE);
 
 const readFile = (file) => new Promise((resolve, reject) => {
     fs.readFile(file, "utf-8", (err, data) => {
@@ -17,7 +20,11 @@ const readFile = (file) => new Promise((resolve, reject) => {
 });
 
 const processFile = (data) => {
-    const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareRewards);
+    const missions = findMissions(
+        JSON.parse(data),
+        CASE_INSENSITIVE ? ITEM.toUpperCase() : ITEM,
+        MIN_PROP || 0
+    ).sort(compareRewards);
     postProcessMissions(missions);
 };
 
@@ -136,7 +143,10 @@ const findRewards = (mission, item, minProp) => {
 
 const findInRewards = (mission, rewards, item, minProp) => {
     return rewards
-        .filter(reward => reward.item.includes(item) && reward.properbility >= minProp)
+        .filter(reward => 
+            (CASE_INSENSITIVE ? reward.item.toUpperCase() : reward.item).includes(item) 
+            && reward.properbility >= minProp
+        )
         .map(reward => ({reward, mission}));
 }
 
