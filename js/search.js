@@ -5,6 +5,9 @@ const ITEM = argsMap.get("--item");
 const MIN_PROP = argsMap.get("--minProp");
 const BLACKLIST = argsMap.get("--blacklist") || argsMap.get("-x");
 const WHITELIST = argsMap.get("--whitelist") || argsMap.get("-w");
+const CASE_INSENSITIVE = argsMap.get("--caseinsensitive") || argsMap.get("-i");
+
+console.log("case insensitve", CASE_INSENSITIVE);
 
 const readFile = (file) => new Promise((resolve, reject) => {
     fs.readFile(file, "utf-8", (err, data) => {
