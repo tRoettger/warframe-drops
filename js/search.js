@@ -3,9 +3,63 @@ const argsMap = require("./arg-mapping.js");
 const FILE_NAME = argsMap.get("--file");
 const ITEM = argsMap.get("--item");
 const MIN_PROP = argsMap.get("--minProp");
+const BLACKLIST = argsMap.get("--blacklist");
 
 const processFile = (data) => {
     const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareRewards);
+    postProcessMissions(missions);
+};
+
+const postProcessMissions = (missions) => {
+    if(BLACKLIST) {
+        fs.readFile(BLACKLIST, "utf-8", (err, data) => {
+            if(err) {
+                console.log("Could not read blacklist.");
+            } else {
+                printMissions(missions.filter(filterByBlacklist(data)));
+            }
+        });
+    } else {
+        printMissions(missions);
+    }
+};
+
+const MISSION_REGEX = /(?<type>[^\()]+)[\s\(]{0,1}(?<rotation>Rotation\s[A-Z]*)[\)]{0,1}/;
+
+const filterByBlacklist = (data) => {
+    const blacklist = data
+        .replaceAll("\r", "")
+        .split("\n")
+        .map(mission => mission.trim())
+        .filter(mission => mission.length > 0);
+    const conditions = [];
+    for(let item of blacklist) {
+        const itemMatch = item.match(MISSION_REGEX);
+        if(itemMatch && itemMatch.groups) {
+            conditions.push(isMissionWithRotation(
+                itemMatch.groups.type.trim(),
+                itemMatch.groups.rotation.trim()
+            ));
+        } else {
+            conditions.push(isMissionWithType(item.trim()));
+        }
+    }
+    return (mission) => !conditions.some(condition => condition(mission));
+};
+
+const isMissionWithType = (type) => {
+    return (mission) => mission.mission.type == type;
+};
+
+const isMissionWithRotation = (type, rotation) => {
+    return (mission) => (
+        mission.mission.type == type 
+        && mission.rotation 
+        && mission.rotation == rotation
+    );
+};
+
+const printMissions = (missions) => {
     for(let mission of missions) {
         let type = mission.mission.type;
         if(mission.rotation) {
