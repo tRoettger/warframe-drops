@@ -4,6 +4,17 @@ const FILE_NAME = argsMap.get("--file");
 const ITEM = argsMap.get("--item");
 const MIN_PROP = argsMap.get("--minProp");
 const BLACKLIST = argsMap.get("--blacklist");
+const WHITELIST = argsMap.get("--whitelist");
+
+const readFile = (file) => new Promise((resolve, reject) => {
+    fs.readFile(file, "utf-8", (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    })
+});
 
 const processFile = (data) => {
     const missions = findMissions(JSON.parse(data), ITEM, MIN_PROP || 0).sort(compareRewards);
@@ -11,29 +22,47 @@ const processFile = (data) => {
 };
 
 const postProcessMissions = (missions) => {
+    let promise;
     if(BLACKLIST) {
-        fs.readFile(BLACKLIST, "utf-8", (err, data) => {
-            if(err) {
-                console.log("Could not read blacklist.");
-            } else {
-                printMissions(missions.filter(filterByBlacklist(data)));
-            }
-        });
+        promise = readFile(BLACKLIST)
+            .then((data) => missions.filter(filterByBlacklist(data)))
+            .catch((err) => {
+                console.log("Could not read blacklist.", err);
+                return [];
+            });
+    } else if(WHITELIST) {
+        promise = readFile(WHITELIST)
+            .then((data) => missions.filter(filterByWhitelist(data)))
+            .catch((err) => {
+                console.log("Could not read whitelist.", err);
+                return [];
+            });
     } else {
-        printMissions(missions);
+        promise = new Promise((resolve, reject) => resolve(missions));
     }
+    promise.then(printMissions);
 };
 
 const MISSION_REGEX = /(?<type>[^\()]+)[\s\(]{0,1}(?<rotation>Rotation\s[A-Z]*)[\)]{0,1}/;
 
 const filterByBlacklist = (data) => {
-    const blacklist = data
+    const conditions = createMissionFilters(data)
+    return (mission) => !conditions.some(condition => condition(mission));
+};
+
+const filterByWhitelist = (data) => {
+    const conditions = createMissionFilters(data);
+    return (mission) => conditions.some(condition => condition(mission));
+}
+
+const createMissionFilters = (data) => {
+    const missionlist = data
         .replaceAll("\r", "")
         .split("\n")
         .map(mission => mission.trim())
         .filter(mission => mission.length > 0);
     const conditions = [];
-    for(let item of blacklist) {
+    for(let item of missionlist) {
         const itemMatch = item.match(MISSION_REGEX);
         if(itemMatch && itemMatch.groups) {
             conditions.push(isMissionWithRotation(
@@ -44,8 +73,8 @@ const filterByBlacklist = (data) => {
             conditions.push(isMissionWithType(item.trim()));
         }
     }
-    return (mission) => !conditions.some(condition => condition(mission));
-};
+    return conditions;
+}
 
 const isMissionWithType = (type) => {
     return (mission) => mission.mission.type == type;
@@ -111,10 +140,10 @@ const findInRewards = (mission, rewards, item, minProp) => {
         .map(reward => ({reward, mission}));
 }
 
-fs.readFile(FILE_NAME, 'utf-8', (err, data) => {
-    if(err) {
-        console.error(err);
-    } else {
-        processFile(data);
-    }
-});
+if(WHITELIST && BLACKLIST) {
+    console.error("--blacklist and --whitelist cannot be used at the same time.");
+} else {
+    readFile(FILE_NAME)
+        .then(processFile)
+        .catch(console.error);
+}
